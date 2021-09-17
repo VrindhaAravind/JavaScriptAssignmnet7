@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Country Form JSONP</title>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        
+    </style>
+</head>
+
+<body >
+    <h2 style="font-family: fantasy; text-align: center; margin-bottom: 100px;">SELECT YOUR COUNTRY</h2>
+    <div class='container-fluid mt-5'>
+      <div class='container'>
+        <div class='row '>
+          <div class='col-md-6 ' style="margin-bottom: 10px;">
+            <p><b>NAME</b></p>
+          </div>
+          <div class='col-md-6 ' >
+            <input class="form-control" type="text" placeholder="Name">
+          </div>
+        </div>
+        <div class='row ' style="margin-bottom: 10px;">
+          <div class='col-md-6 '>
+            <p><b>EMAIL</b></p>
+          </div>
+          <div class='col-md-6 '>
+            <input class="form-control" type="email" placeholder="Email">
+          </div>
+        </div>
+        <!-- country -->
+        <div class='row ' style="margin-bottom: 10px;">
+          <div class='col-md-6 '>
+            <p><b>COUNTRY</b></p>
+          </div>
+          <div class='col-md-6 '>
+            <select id="country" class='form-control'>
+              <option value="">-- Country --</option>
+            </select>
+          </div>
+        </div> 
+  
+        
+        <div class='row w3-margin-bottom'>
+          <div class='col-md-6 '>
+            <p><b>REGION</b></p>
+          </div>
+          <div class='col-md-6 '>
+            <select id="region" class='form-control'>
+              <option value="">-- Region --</option>
+            </select>
+          </div>
+        </div> 
+        <div class="row">
+          <button style="margin-top: 10px; margin-left: 40%; color: black;" class="btn btn-primary"
+            type="submit">Submit</button>
+        </div>
+        <div id='location'></div>
+      </div> 
+    </div>
+​
+         
+​
+        <script>
+            var KEY = "b48eabc82f30a02ac403be534b613113";
+            function JavaScriptFetch() {
+                var script = document.createElement('script');
+                script.src = 'https://battuta.medunes.net/api/country/all/?key=4d3014bf10ff10581319f3a9a314117c&callback=country';
+                document.querySelector('head').appendChild(script);
+            }
+            
+            function processJSONPResponse(data) {
+                console.log(data);
+                
+                $.each(data, function (index, value) {
+          // APPEND OR INSERT DATA TO SELECT ELEMENT.
+          $("#country").append(
+            '<option value="' + value.code + '">' + value.name + "</option>"
+          );
+        });
+    
+        $("#country").change(function () {
+        selectedCountry = this.options[this.selectedIndex].text;
+        countryCode = $("#country").val();
+        // Populate country select box from battuta API
+        url ="https://battuta.medunes.net/api/region/" +countryCode +"/all/?key=" +KEY +"&callback=?";
+        $.getJSON(url, function (data) {
+          $("#region option").remove();
+          $.each(data, function (index, value) {
+            // APPEND OR INSERT DATA TO SELECT ELEMENT.
+            $("#region").append(
+              '<option value="' + value.region + '">' + value.region + "</option>"
+            );
+          });
+        });
+      });
+               
+        }
+        </script>
+        <!--Reference to jQuery-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $("#reset").click(function (e) {
+                    location.reload();
+                });
+    
+                $("#jsonpButton").ready(function (e) {
+                    $.ajax({
+                        url: "https://battuta.medunes.net/api/country/all/?key=31978891439fe6f9ce289267d03fd356&callback=country",
+                        dataType: "jsonp",
+                        type: "POST",
+                        jsonpCallback: 'processJSONPResponse', // add this property
+                        contentType: "application/json; charset=utf-8",
+                        
+                    });
+                });
+            });
+        </script>
+</body>
+</html>
